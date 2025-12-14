@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>College Admission AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     body {
       margin: 0;
@@ -11,33 +12,40 @@
       background-color: #f9f9f9;
       color: #111;
     }
+
     .container {
       max-width: 900px;
       margin: 40px auto;
       padding: 0 16px;
     }
+
     h1 {
       font-size: 32px;
       margin-bottom: 8px;
     }
+
     h2 {
       font-size: 16px;
       font-weight: normal;
       color: #555;
       margin-bottom: 24px;
     }
+
     p {
       font-size: 15px;
       color: #333;
       margin-bottom: 20px;
     }
-    iframe {
+
+    #coze-chat {
       width: 100%;
       height: 650px;
-      border: none;
       border-radius: 12px;
+      overflow: hidden;
       background: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
     }
+
     footer {
       margin-top: 24px;
       font-size: 12px;
@@ -46,9 +54,11 @@
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>College Admission AI</h1>
+
     <h2>
       Your AI-powered college planning assistant<br/>
       你的 AI 留学规划助手
@@ -59,14 +69,27 @@
       你可以询问选校、申请时间线、文书思路和整体留学规划。
     </p>
 
-    <iframe
-      src="https://www.coze.com/space/7555240676221599756/bot/7555240676221681676"
-      allow="microphone; clipboard-write"
-    ></iframe>
+    <!-- Chat container -->
+    <div id="coze-chat"></div>
 
     <footer>
       Built with Coze · College Admission AI
     </footer>
   </div>
+
+  <!-- Coze Web Chat SDK (Public, no token needed) -->
+  <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
+
+  <script>
+    new CozeWebSDK.WebChatClient({
+      config: {
+        bot_id: '7555240676221681676',
+      },
+      componentProps: {
+        title: 'College Admission AI',
+        container: document.getElementById('coze-chat'),
+      }
+    });
+  </script>
 </body>
 </html>
