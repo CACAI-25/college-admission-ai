@@ -6,71 +6,423 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
+    :root {
+      --bg: #f4f5f7;
+      --panel: #ffffff;
+      --text: #101828;
+      --muted: #667085;
+      --border: #eaecf0;
+      --accent: #2563eb;
+      --accent-soft: #e8efff;
+      --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background-color: #f9f9f9;
-      color: #111;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
     }
-    .container {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 16px;
+
+    .app { display: flex; min-height: 100vh; }
+
+    .sidebar {
+      width: 280px;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
-    h1 {
-      font-size: 32px;
-      margin-bottom: 8px;
+
+    .brand h1 { margin: 0; font-size: 20px; }
+    .brand p { margin: 4px 0 0; font-size: 13px; color: #cbd5f5; }
+
+    .sidebar button {
+      background: #1d4ed8;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
     }
-    h2 {
-      font-size: 16px;
-      font-weight: normal;
-      color: #555;
-      margin-bottom: 24px;
+
+    .sidebar button.secondary {
+      background: #334155;
     }
-    p {
-      font-size: 15px;
-      color: #333;
-      margin-bottom: 20px;
+
+    .conversation-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    iframe {
+
+    .conversation-item {
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(148,163,184,.12);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .conversation-item.active {
+      background: rgba(59,130,246,.35);
+      border: 1px solid rgba(59,130,246,.5);
+    }
+
+    .main {
+      flex: 1;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .settings-panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .settings-panel label {
+      font-size: 12px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .settings-panel input {
       width: 100%;
-      height: 650px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .settings-panel button {
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      align-self: end;
+    }
+
+    .chat-card {
+      flex: 1;
+      background: var(--panel);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow);
+      min-height: 0;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: var(--accent-soft);
+    }
+
+    .composer {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .composer textarea {
+      flex: 1;
+      resize: none;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 12px;
+      font-size: 14px;
+      min-height: 52px;
+    }
+
+    .composer button {
+      background: var(--accent);
+      color: #fff;
       border: none;
       border-radius: 12px;
-      background: #fff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+      padding: 0 18px;
+      font-size: 14px;
+      cursor: pointer;
     }
-    footer {
-      margin-top: 24px;
+
+    .composer button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .hint {
       font-size: 12px;
-      color: #888;
-      text-align: center;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    @media (max-width: 900px) {
+      .app { flex-direction: column; }
+      .sidebar { width: 100%; }
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <h1>College Admission AI</h1>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>College Admission AI</h1>
+      <p>Personal demo · Coze OpenAPI</p>
+    </div>
+    <button id="newChatBtn">+ New Chat</button>
+    <button id="clearKeyBtn" class="secondary">Clear API Key</button>
+    <div class="conversation-list" id="conversationList"></div>
+  </aside>
 
-    <h2>
-      Your AI-powered college planning assistant<br/>
-      你的 AI 留学规划助手
-    </h2>
+  <main class="main">
+    <section class="settings-panel">
+      <div>
+        <label>Coze API Key</label>
+        <input id="apiKey" type="password" placeholder="pat_xxx" />
+      </div>
+      <div>
+        <label>Bot ID</label>
+        <input id="botId" type="text" placeholder="7555..." />
+      </div>
+      <div>
+        <label>User ID</label>
+        <input id="userId" type="text" placeholder="student_001" />
+      </div>
+      <button id="saveSettingsBtn">Save</button>
+    </section>
 
-    <p>
-      Ask questions about college lists, application timelines, essays, and planning.<br/>
-      你可以询问选校、申请时间线、文书思路和整体留学规划。
-    </p>
+    <section class="chat-card">
+      <div class="messages" id="messages"></div>
+      <div class="composer">
+        <textarea id="messageInput" placeholder="Ask about admissions, essays, planning..."></textarea>
+        <button id="sendBtn" disabled>Send</button>
+      </div>
+      <div class="hint">⚠️ Demo only. API key is stored locally in your browser.</div>
+    </section>
+  </main>
+</div>
 
-    <iframe
-      src="https://www.coze.com/space/7555240676221599756/bot/7555240676221681676"
-      allow="microphone; clipboard-write"
-    ></iframe>
+<script>
+  const COZE_API_ENDPOINT = "https://api.coze.com/open_api/v2/chat";
 
-    <footer>
-      Built with Coze · College Admission AI
-    </footer>
+  const state = {
+    conversations: [],
+    activeId: null,
+    apiKey: "",
+    botId: "",
+    userId: "",
+  };
+
+  const el = {
+    conversationList: document.getElementById("conversationList"),
+    messages: document.getElementById("messages"),
+    input: document.getElementById("messageInput"),
+    send: document.getElementById("sendBtn"),
+    newChat: document.getElementById("newChatBtn"),
+    clearKey: document.getElementById("clearKeyBtn"),
+    apiKey: document.getElementById("apiKey"),
+    botId: document.getElementById("botId"),
+    userId: document.getElementById("userId"),
+    save: document.getElementById("saveSettingsBtn"),
+  };
+
+  function saveState() {
+    localStorage.setItem("cozeDemoState", JSON.stringify(state));
+  }
+
+  function loadState() {
+    const raw = localStorage.getItem("cozeDemoState");
+    if (raw) Object.assign(state, JSON.parse(raw));
+    if (!state.conversations.length) createConversation();
+    syncUI();
+  }
+
+  function syncUI() {
+    el.apiKey.value = state.apiKey;
+    el.botId.value = state.botId;
+    el.userId.value = state.userId;
+    el.send.disabled = !(state.apiKey && state.botId);
+    renderConversations();
+    renderMessages();
+  }
+
+  function createConversation() {
+    const id = "c_" + Date.now();
+    state.conversations.unshift({ id, title: "New chat", messages: [], cozeId: null });
+    state.activeId = id;
+    saveState();
+    syncUI();
+  }
+
+  function activeConversation() {
+    return state.conversations.find(c => c.id === state.activeId);
+  }
+
+  function renderConversations() {
+    el.conversationList.innerHTML = "";
+    state.conversations.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "conversation-item" + (c.id === state.activeId ? " active" : "");
+      div.textContent = c.title;
+      div.onclick = () => { state.activeId = c.id; saveState(); syncUI(); };
+      el.conversationList.appendChild(div);
+    });
+  }
+
+  function renderMessages() {
+    el.messages.innerHTML = "";
+    const c = activeConversation();
+    if (!c) return;
+    c.messages.forEach(m => {
+      const d = document.createElement("div");
+      d.className = "message " + m.role;
+      d.textContent = m.content;
+      el.messages.appendChild(d);
+    });
+    el.messages.scrollTop = el.messages.scrollHeight;
+  }
+
+  function addMessage(role, content) {
+    const c = activeConversation();
+    if (!c) return;
+    c.messages.push({ role, content });
+    if (role === "user" && c.title === "New chat") {
+      c.title = content.slice(0, 24) + (content.length > 24 ? "…" : "");
+    }
+    saveState();
+    syncUI();
+  }
+
+  function addThinking() {
+    const c = activeConversation();
+    const last = c.messages[c.messages.length - 1];
+    if (last && last.role === "assistant" && last.content === "Thinking…") return;
+    addMessage("assistant", "Thinking…");
+  }
+
+  function extractReply(payload) {
+    if (!payload) return "";
+    if (payload.data?.messages?.length) {
+      const m = payload.data.messages.find(x => x.role === "assistant" || x.type === "answer");
+      return m?.content || m?.text;
+    }
+    if (payload.data?.choices?.length) {
+      return payload.data.choices[0]?.text || "";
+    }
+    return payload.message || payload.data?.reply || "";
+  }
+
+  async function sendToCoze(text) {
+    if (!state.apiKey || !state.botId) return;
+    const c = activeConversation();
+    el.send.disabled = true;
+    addThinking();
+
+    try {
+      const res = await fetch(COZE_API_ENDPOINT, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${state.apiKey}`,
+        },
+        body: JSON.stringify({
+          bot_id: state.botId,
+          user: state.userId || "user_demo",
+          query: text,
+          conversation_id: c.cozeId || undefined,
+          stream: false,
+        }),
+      });
+
+      const json = await res.json();
+      c.messages.pop();
+      c.cozeId = json?.data?.conversation_id || c.cozeId;
+      addMessage("assistant", extractReply(json) || "No response.");
+    } catch (e) {
+      c.messages.pop();
+      addMessage("assistant", "Error: " + e.message);
+    } finally {
+      el.send.disabled = !(state.apiKey && state.botId);
+    }
+  }
+
+  el.newChat.onclick = createConversation;
+  el.clearKey.onclick = () => {
+    state.apiKey = "";
+    saveState();
+    syncUI();
+  };
+
+  el.save.onclick = () => {
+    state.apiKey = el.apiKey.value.trim();
+    state.botId = el.botId.value.trim();
+    state.userId = el.userId.value.trim();
+    saveState();
+    syncUI();
+    addMessage("assistant", "Settings saved.");
+  };
+
+  el.send.onclick = () => {
+    const text = el.input.value.trim();
+    if (!text) return;
+    el.input.value = "";
+    addMessage("user", text);
+    sendToCoze(text);
+  };
+
+  el.input.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      el.send.click();
+    }
+  });
+
+  loadState();
+  
   </div>
 </body>
 </html>
